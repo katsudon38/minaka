@@ -225,7 +225,7 @@ export class BoardView {
       const y = this.groundY(x, z);
       root.position.set(toWorldX(x), y, toWorldZ(z));
       const yaw = Math.atan2(u.dirX, u.dirZ);
-      root.rotation.y = yaw;
+      model.rotation.y = yaw;
       this.root.add(root);
       return { root, model, hp, materials, y, yaw, lunge: 0, lungeDir: new THREE.Vector3(), deadAt: -1, opacity: 1 };
     });
