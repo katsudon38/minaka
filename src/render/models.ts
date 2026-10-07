@@ -297,11 +297,12 @@ export function createHpBar(width = 0.5): THREE.Group {
   const g = new THREE.Group();
   const bg = new THREE.Mesh(
     geo(`hp-bg-${width}`, () => new THREE.PlaneGeometry(width, 0.07)),
-    new THREE.MeshBasicMaterial({ color: 0x1b1b1b, transparent: true, opacity: 0.75, depthTest: false }),
+    new THREE.MeshBasicMaterial({ color: 0x1b1b1b, transparent: true, opacity: 0.6, depthTest: false, toneMapped: false }),
   );
   const fill = new THREE.Mesh(
     geo(`hp-fill-${width}`, () => new THREE.PlaneGeometry(width, 0.07).translate(width / 2, 0, 0)),
-    new THREE.MeshBasicMaterial({ color: 0x5fd35f, depthTest: false }),
+    // 背景と同じ半透明パスで描画しないと、renderOrder に関係なく背景が上に重なって黒く見える
+    new THREE.MeshBasicMaterial({ color: 0x5fd35f, transparent: true, depthTest: false, toneMapped: false }),
   );
   fill.position.x = -width / 2;
   fill.position.z = 0.001;

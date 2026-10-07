@@ -354,7 +354,7 @@ export class BoardView {
         m.emissive.setRGB(pulse * 0.3, pulse, pulse * 0.2);
       }
       v.hp.visible = u.hp < u.maxHp;
-      v.hp.quaternion.copy(camQ);
+      v.hp.quaternion.copy(v.root.quaternion).invert().multiply(camQ);
       setHpBar(v.hp, u.hp / u.maxHp);
     }
     for (let i = 0; i < this.obstacles.length; i++) {
