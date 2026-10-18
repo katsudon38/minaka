@@ -88,3 +88,32 @@ export function decodeSetup(text: string): MatchSetup {
   if (v.version !== 1) throw new Error('未対応のバージョン');
   return v;
 }
+
+const STANCE_IDS: readonly Stance[] = ['advance', 'hold', 'defend'];
+
+/**
+ * 外部（オンライン対戦の相手）から届いた配置データの形を検査する。
+ * 形が正しければ、余計なプロパティを落とした配置を返す。中身の妥当性は validateSide で確かめる。
+ */
+export function parseItems(value: unknown): PlacementItem[] | null {
+  if (!Array.isArray(value) || value.length > 200) return null;
+  const out: PlacementItem[] = [];
+  for (const v of value) {
+    if (!v || typeof v !== 'object') return null;
+    const it = v as Record<string, unknown>;
+    if (!Number.isInteger(it.tx) || !Number.isInteger(it.tz)) return null;
+    const tx = it.tx as number;
+    const tz = it.tz as number;
+    if (it.kind === 'unit') {
+      if (typeof it.type !== 'string' || !Object.hasOwn(UNIT_DEFS, it.type)) return null;
+      if (!STANCE_IDS.includes(it.stance as Stance)) return null;
+      out.push({ kind: 'unit', type: it.type as UnitType, tx, tz, stance: it.stance as Stance });
+    } else if (it.kind === 'obstacle') {
+      if (typeof it.type !== 'string' || !Object.hasOwn(OBSTACLE_DEFS, it.type)) return null;
+      out.push({ kind: 'obstacle', type: it.type as ObstacleType, tx, tz });
+    } else {
+      return null;
+    }
+  }
+  return out;
+}
